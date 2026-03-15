@@ -1,0 +1,104 @@
+substitutions:
+  lets_ping: "true"
+
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  # name_add_mac_suffix: true
+  comment: $comment
+  build_path: ./.build/$device
+  project:
+    name: "${project_name}"
+    version: "${project_version}"
+
+api:
+  reboot_timeout: 0s
+
+ota:
+  - platform: esphome
+  - platform: web_server
+
+logger:
+  level: INFO
+
+mdns:
+  disabled: false
+
+web_server:
+  port: 80
+  log: false
+  ota: false
+  version: 3
+
+wifi:
+  ap: {}
+
+captive_portal:
+
+improv_serial:
+
+debug:
+  update_interval: never
+
+script:
+  - id: site_ping
+    then:
+      - wait_until:
+          condition:
+            wifi.connected:
+          timeout: 15s
+      - logger.log: "Pinging..."
+
+sensor:
+  - platform: uptime
+    name: "Uptime"
+    entity_category: diagnostic
+
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    entity_category: diagnostic
+    icon: mdi:signal
+
+button:
+  - platform: restart
+    name: "Restart"
+    id: Restart
+    entity_category: diagnostic
+    icon: mdi:restart
+
+  - platform: factory_reset
+    name: "Restart with Factory Default Settings"
+    id: Reset
+    entity_category: diagnostic
+    disabled_by_default: true
+
+text_sensor:
+  - platform: template
+    name: ESPHome Version
+    icon: mdi:new-box
+    entity_category: diagnostic
+    lambda: |-
+      return std::string(ESPHOME_VERSION);
+
+  - platform: debug
+    reset_reason:
+      name: "Reset Reason"
+      disabled_by_default: true
+      entity_category: diagnostic
+
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+      disabled_by_default: true
+      entity_category: diagnostic
+      icon: mdi:ip
+    ssid:
+      name: "Connected SSID"
+      disabled_by_default: true
+      entity_category: diagnostic
+      icon: mdi:access-point-network
+    mac_address:
+      name: "Mac Address"
+      disabled_by_default: true
+      entity_category: diagnostic
+      icon: mdi:console-network

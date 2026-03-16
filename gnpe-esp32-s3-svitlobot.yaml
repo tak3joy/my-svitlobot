@@ -185,18 +185,18 @@ font:
       family: Roboto
       weight: 900
     id: font_time_small
-    size: 20
+    size: 16
 
   - file:
       type: gfonts
       family: Roboto
       weight: 900
     id: font_time_big
-    size: 100
+    size: 20
 
   - file: "https://github.com/Templarian/MaterialDesign-Webfont/raw/refs/heads/master/fonts/materialdesignicons-webfont.ttf"
     id: font_mdi_small
-    size: 40
+    size: 27
     glyphs:
       - "\U000F092B"
       - "\U000F0928"
@@ -211,7 +211,7 @@ font:
 
   - file: "https://github.com/Templarian/MaterialDesign-Webfont/raw/refs/heads/master/fonts/materialdesignicons-webfont.ttf"
     id: font_mdi_big
-    size: 130
+    size: 87
     glyphs:
       - "\U000F06E9"
       - "\U000F0ECD"
@@ -223,7 +223,7 @@ spi:
 
 output:
   - platform: ledc
-    pin: GPIO7
+    pin: GPIO15
     id: backlight_pwm
 
 light:
@@ -244,7 +244,7 @@ display:
       width: 80
       height: 160
       offset_width: 26
-      offset_height: 1
+      offset_height: 0
     cs_pin: GPIO12
     dc_pin: GPIO13
     reset_pin: GPIO14
@@ -287,51 +287,51 @@ display:
             else if (signal >= -100) wifi_icon = "\U000F091F";
             else wifi_icon = "\U000F092B";
           }
-          it.printf(20, 20, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", wifi_icon);
+          it.printf(12, 20, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", wifi_icon);
 
           // WiFi Text
           if (id(oled_wifi).is_ap_active()) {
-            it.printf(40, 20, id(font_text_big), COLOR_RED, TextAlign::CENTER, "AP");
+            it.printf(60, 20, id(font_text_big), COLOR_RED, TextAlign::CENTER, "AP");
           } else if (id(oled_wifi).is_connected()) {
-            it.printf(40, 20, id(font_text_big), COLOR_GREEN, TextAlign::CENTER, "ON");
+            it.printf(60, 20, id(font_text_big), COLOR_GREEN, TextAlign::CENTER, "ON");
           } else {
-            it.printf(40, 20, id(font_text_big), color_on, TextAlign::CENTER, "OFF");
+            it.printf(60, 20, id(font_text_big), color_on, TextAlign::CENTER, "OFF");
           }
 
           // Code
           if (id(my_key).has_state()) {
             auto x = id(response_code).state;
             if (x.empty()) {
-              it.printf(21, 61, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F1792");
+              it.printf(18, 56, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F1792");
             } else if (x == "---") {
-              it.printf(21, 61, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F1790");
+              it.printf(18, 56, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F1790");
             } else {
               int code = atoi(x.c_str());
               if (code == 200) {
-                it.printf(21, 61, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F0789");
+                it.printf(18, 56, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F0789");
               } else if (code >= 400) {
-                it.printf(21, 61, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F0551");
+                it.printf(18, 56, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F0551");
               } else {
-                it.printf(21, 61, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F124A");
+                it.printf(18, 56, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F124A");
               }
             }
-            it.printf(40, 61, id(font_text_big), color_on, TextAlign::CENTER, "%s", id(response_code).state.c_str());
+            it.printf(60, 56, id(font_text_big), color_on, TextAlign::CENTER, "%s", id(response_code).state.c_str());
           }
 
           // Big Icon
           if (id(my_key).has_state()) {
             if (id(send_status).state) {
-              it.printf(40, 151, id(font_mdi_big), COLOR_GREEN, TextAlign::CENTER, "%s", "\U000F06E9");
+              it.printf(40, 108, id(font_mdi_big), COLOR_GREEN, TextAlign::CENTER, "%s", "\U000F06E9");
             } else {
-              it.printf(40, 151, id(font_mdi_big), COLOR_RED, TextAlign::CENTER, "%s", "\U000F0ECD");
+              it.printf(40, 108, id(font_mdi_big), COLOR_RED, TextAlign::CENTER, "%s", "\U000F0ECD");
             }
           } else {
-            it.printf(40, 151, id(font_mdi_big), COLOR_RED, TextAlign::CENTER, "%s", "\U000F1984");
+            it.printf(40, 108, id(font_mdi_big), COLOR_RED, TextAlign::CENTER, "%s", "\U000F1984");
           }
 
-          // IP Adress
+          // IP Address
           if (id(ip_adress).has_state()) {
-            it.printf(40, 230, id(font_text_small), color_on, TextAlign::CENTER, "%s", id(ip_adress).state.c_str());
+            it.printf(40, 148, id(font_text_small), color_on, TextAlign::CENTER, "%s", id(ip_adress).state.c_str());
           }
 
       - id: time_page
@@ -355,10 +355,10 @@ display:
           if (time.is_valid()) {
             std::string day = time.strftime("%A");
             std::transform(day.begin(), day.end(), day.begin(), ::toupper);
-            it.printf(68, 15, id(font_time_small), color_on, TextAlign::CENTER, day.c_str());
-            it.strftime(40, 75, id(font_time_big), color_on, TextAlign::CENTER, "%H", time);
-            it.strftime(40, 165, id(font_time_big), color_on, TextAlign::CENTER, "%M", time);
-            it.strftime(40, 226, id(font_time_small), color_on, TextAlign::CENTER, "%d-%m-%Y", time);
+            it.printf(40, 5, id(font_time_small), color_on, TextAlign::CENTER, day.c_str());
+            it.strftime(40, 25, id(font_time_big), color_on, TextAlign::CENTER, "%H", time);
+            it.strftime(40, 50, id(font_time_big), color_on, TextAlign::CENTER, "%M", time);
+            it.strftime(40, 80, id(font_time_small), color_on, TextAlign::CENTER, "%d-%m-%Y", time);
           }
 
 interval:

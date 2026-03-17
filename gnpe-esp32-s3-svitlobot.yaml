@@ -65,10 +65,6 @@ web_server:
 wifi:
   ap: {}  # This spawns an AP with the device name and mac address with no password.
   id: oled_wifi
-  enable_btm: true
-  enable_rrm: true
-
-captive_portal:
 
 improv_serial:
 

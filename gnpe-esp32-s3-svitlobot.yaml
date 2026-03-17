@@ -3,7 +3,7 @@ substitutions:
   name: "svitlobot-s3-gnpe"
   friendly_name: "Svitlo Bot"
   project_name: "ajs.SvitloBot"
-  project_version: "3.5.49 Custom"
+  project_version: "3.5.49"
   comment: "ESPHome Svitlo Bot | Shadow"
   ping_interval: "55s"
 
@@ -65,6 +65,11 @@ web_server:
 wifi:
   ap: {}  # This spawns an AP with the device name and mac address with no password.
   id: oled_wifi
+  fast_connect: false
+  enable_btm: true
+  enable_rrm: true
+
+captive_portal:
 
 improv_serial:
 
@@ -116,7 +121,7 @@ script:
             - http_request.get:
                 url: !lambda |-
                   return ((std::string) "https://api.svitlobot.in.ua/channelPing?channel_key=" + id(my_key).state).c_str();
-                capture_response: false
+                capture_response: true
                 on_response:
                   then:
                     - lambda: id(set_state)->execute(response->status_code, response->duration_ms);
@@ -167,32 +172,32 @@ font:
       family: Roboto
       weight: 900
     id: font_text_small
-    size: 16
+    size: 12
 
   - file:
       type: gfonts
       family: Roboto
       weight: 900
     id: font_text_big
-    size: 30
+    size: 22
 
   - file:
       type: gfonts
       family: Roboto
       weight: 900
     id: font_time_small
-    size: 16
+    size: 12
 
   - file:
       type: gfonts
       family: Roboto
       weight: 900
     id: font_time_big
-    size: 20
+    size: 60
 
   - file: "https://github.com/Templarian/MaterialDesign-Webfont/raw/refs/heads/master/fonts/materialdesignicons-webfont.ttf"
     id: font_mdi_small
-    size: 27
+    size: 18
     glyphs:
       - "\U000F092B"
       - "\U000F0928"
@@ -207,7 +212,7 @@ font:
 
   - file: "https://github.com/Templarian/MaterialDesign-Webfont/raw/refs/heads/master/fonts/materialdesignicons-webfont.ttf"
     id: font_mdi_big
-    size: 87
+    size: 76
     glyphs:
       - "\U000F06E9"
       - "\U000F0ECD"
@@ -283,7 +288,7 @@ display:
             else if (signal >= -100) wifi_icon = "\U000F091F";
             else wifi_icon = "\U000F092B";
           }
-          it.printf(12, 20, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", wifi_icon);
+          it.printf(18, 20, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", wifi_icon);
 
           // WiFi Text
           if (id(oled_wifi).is_ap_active()) {
@@ -298,20 +303,20 @@ display:
           if (id(my_key).has_state()) {
             auto x = id(response_code).state;
             if (x.empty()) {
-              it.printf(18, 56, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F1792");
+              it.printf(18, 52, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F1792");
             } else if (x == "---") {
-              it.printf(18, 56, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F1790");
+              it.printf(18, 52, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F1790");
             } else {
               int code = atoi(x.c_str());
               if (code == 200) {
-                it.printf(18, 56, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F0789");
+                it.printf(18, 52, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F0789");
               } else if (code >= 400) {
-                it.printf(18, 56, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F0551");
+                it.printf(18, 52, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F0551");
               } else {
-                it.printf(18, 56, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F124A");
+                it.printf(18, 52, id(font_mdi_small), color_on, TextAlign::CENTER, "%s", "\U000F124A");
               }
             }
-            it.printf(60, 56, id(font_text_big), color_on, TextAlign::CENTER, "%s", id(response_code).state.c_str());
+            it.printf(60, 52, id(font_text_big), color_on, TextAlign::CENTER, "%s", id(response_code).state.c_str());
           }
 
           // Big Icon
@@ -351,10 +356,10 @@ display:
           if (time.is_valid()) {
             std::string day = time.strftime("%A");
             std::transform(day.begin(), day.end(), day.begin(), ::toupper);
-            it.printf(40, 5, id(font_time_small), color_on, TextAlign::CENTER, day.c_str());
-            it.strftime(40, 25, id(font_time_big), color_on, TextAlign::CENTER, "%H", time);
-            it.strftime(40, 50, id(font_time_big), color_on, TextAlign::CENTER, "%M", time);
-            it.strftime(40, 80, id(font_time_small), color_on, TextAlign::CENTER, "%d-%m-%Y", time);
+            it.printf(40, 8, id(font_time_small), color_on, TextAlign::CENTER, day.c_str());
+            it.strftime(40, 48, id(font_time_big), color_on, TextAlign::CENTER, "%H", time);
+            it.strftime(40, 108, id(font_time_big), color_on, TextAlign::CENTER, "%M", time);
+            it.strftime(40, 148, id(font_time_small), color_on, TextAlign::CENTER, "%d-%m-%Y", time);
           }
 
 interval:
